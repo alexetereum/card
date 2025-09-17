@@ -2,55 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>📨 Telegram Last Message Viewer</title>
+  <title>Telegram Viewer</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
       background: #f7f7f7;
       color: #333;
       text-align: center;
       padding-top: 100px;
     }
-    h1 {
-      font-size: 2em;
-      margin-bottom: 40px;
-    }
-    #message-box {
+    #message {
       background: #fff;
       display: inline-block;
       padding: 30px 50px;
       border-radius: 10px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .label {
-      font-weight: bold;
-      margin-top: 20px;
-      display: block;
-    }
-    .value {
-      font-size: 1.4em;
-      margin-top: 5px;
-    }
-    .error {
-      color: red;
-      font-size: 1.2em;
+      font-size: 1.6em;
     }
   </style>
 </head>
 <body>
 
-  <h1>📨 Last Telegram Message</h1>
-
-  <div id="message-box">
-    <div class="label">Message:</div>
-    <div id="text" class="value">Loading...</div>
-
-    <div class="label">Chat ID:</div>
-    <div id="chatId" class="value">Loading...</div>
-  </div>
+  <div id="message">Loading...</div>
 
   <script>
-    // 🚨 Replace with your actual Telegram Bot Token
     const BOT_TOKEN = '7450147323:AAEJCpmCb5E58uDgtYdQ43IYu-wOJBhizXI';
     const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`;
 
@@ -61,43 +36,28 @@
         const res = await fetch(API_URL);
         const data = await res.json();
 
-        if (!data.ok) {
-          document.getElementById('text').textContent = 'API Error';
-          document.getElementById('chatId').textContent = '-';
+        if (!data.ok || !data.result.length) {
+          document.getElementById('message').textContent = 'No messages found';
           return;
         }
 
-        const updates = data.result;
-        if (!updates.length) {
-          document.getElementById('text').textContent = 'No messages found';
-          document.getElementById('chatId').textContent = '-';
-          return;
-        }
+        const lastUpdate = data.result[data.result.length - 1];
+        const text = lastUpdate.message?.text || '[Non-text message]';
 
-        const lastUpdate = updates[updates.length - 1];
-        const message = lastUpdate.message || {};
-        const text = message.text || '[Non-text message]';
-        const chatId = message.chat ? message.chat.id : 'Unknown';
-
-        // Only update if there's a new message
         if (lastUpdate.update_id !== lastUpdateId) {
           lastUpdateId = lastUpdate.update_id;
-          document.getElementById('text').textContent = text;
-          document.getElementById('chatId').textContent = chatId;
+          document.getElementById('message').textContent = text;
         }
 
       } catch (err) {
         console.error(err);
-        document.getElementById('text').textContent = '❌ Failed to load';
-        document.getElementById('chatId').textContent = '-';
+        document.getElementById('message').textContent = '❌ Failed to load';
       }
     }
 
-    // Run immediately, then every 3s
     fetchLastMessage();
     setInterval(fetchLastMessage, 3000);
   </script>
 
 </body>
 </html>
-
