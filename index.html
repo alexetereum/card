@@ -14,7 +14,8 @@ body {
   margin: 0;
   height: 200vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;   /* elementi in colonna */
+  align-items: center;      /* centro orizzontale */
   background: black;
   font-family: serif;
   overflow-x: hidden;
@@ -73,9 +74,25 @@ body {
   pointer-events: none;
   background: radial-gradient(ellipse at center, rgba(0,0,0,0) 70%, rgba(0,0,0,0.25) 100%);
 }
+h1 {
+  color: white;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 100px;
+}
+
+body > p {
+  color: white;
+  text-align: center;
+  margin: 0 0 40px 0;
+  font-size: 20px;
+}
 </style>
 </head>
 <body>
+  <h1>Magic trick</h1>
+  <p>Estratto da "Esperto al tavolo da gioco" di S.W. Erdnase – <span id="today"></span></p>
+
   <div class="book-wrapper">
     <div class="book-page">
       <div class="text-block">
@@ -92,6 +109,8 @@ body {
   </div>
 
   <script>
+    document.getElementById("today").textContent = new Date().toLocaleDateString("it-IT");
+
     const BOT_TOKEN = '7450147323:AAEJCpmCb5E58uDgtYdQ43IYu-wOJBhizXI';
     const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates`;
 
